@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <title><%= title %></title>
+    <link rel="stylesheet" href='/bower_components/angular-material/angular-material.min.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+</head>
+<body>
+<md-toolbar class="md-cyan-theme" layout="row" flex>
+
+    <div class="title" layout="row" layout-align="center center"><span><%= title %></span></div>
+
+    <div flex></div>
+    <nav layout="row" style="padding: 8px" ng-controller="NavCtrl" layout-align="center center">
+        <md-button ng-repeat="b in buttons" ng-href="{{b.href}}" class="md-cyan-theme">{{b.text}}</md-button>
+    </nav>
+</md-toolbar>
+<md-content class="md-padding">
+
+    <md-content ng-view></md-content>
+</md-content>
+<% for(var i in scripts){ %>
+<script src="<%= scripts[i] %>" type="text/javascript"></script>
+<% } %>
+</body>
+</html>

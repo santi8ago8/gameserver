@@ -1,0 +1,9 @@
+<h1>Main file!</h1>
+<p>Veces que recargo: {{count}}</p>
+<h2>Comentarios</h2>
+<div class="comments">
+    <form ng-submit="sendComment()">
+        <md-text-float label="Enviar un comentario" ng-model="nuevoComentario"></md-text-float>
+    </form>
+    <div class="comment" style="text-shadow: 0px 0px 6px {{c.color}}"  ng-repeat="c in comments">{{c.comment}}</div>
+</div>
