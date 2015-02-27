@@ -3,7 +3,7 @@
  */
 var express = require('express');
 var router = express.Router();
-var serverList = require('./server_list');
+var serverList = require('./logic/server_list');
 var fail = require('./logic/fail_module');
 
 /* GET servers listing. */
