@@ -4,7 +4,7 @@
 
 var Validator = require('jsonschema').Validator;
 var v = new Validator();
-var EventEmitter = require('events').EventEmitter;
+var EventEmitter3 = require('./../../../sharedcode/eventemitter3').EventEmitter3;
 var util = require('util');
 
 //server list!
@@ -25,6 +25,7 @@ var schemaServer = {
 };
 
 function ServerList(password) {
+    EventEmitter3.prototype.constructor.apply(this, arguments);
     var self = this;
     self.password = password;
     self.list = list;
@@ -61,7 +62,7 @@ function ServerList(password) {
     };
 }
 
-util.inherits(ServerList, EventEmitter);
+util.inherits(ServerList, EventEmitter3);
 
 var password = 'fad4a46b-dbdd-4ade-a62e-c071bf75e476-10aec1ba-895d-4ce2-a81a-6a0f6bd792c0';
 var varServerList = new ServerList(password);

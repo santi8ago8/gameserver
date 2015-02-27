@@ -2,7 +2,7 @@
  * Created by santi8ago8 on 27/02/15.
  */
 
-var EventEmitter3 = require('./eventemitter3').EventEmitter3,
+var EventEmitter3 = require('./').EventEmitter3,
     util = require('util');
 
 
