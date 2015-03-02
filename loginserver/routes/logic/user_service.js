@@ -151,4 +151,4 @@ UserService.prototype.check_token = function (user, cb) {
 
 var varUserService = new UserService();
 
-module.exports = varUserService;
+module.exports.Users = varUserService;

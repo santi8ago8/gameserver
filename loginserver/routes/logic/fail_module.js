@@ -34,4 +34,4 @@ failVar.run(function () {
     throw  new Error("no anda :(")
 });*/
 
-module.exports = failVar;
+module.exports.Fail = failVar;

@@ -1,6 +1,6 @@
 {
   "dependencies": {
     "async": "^0.9.0",
-    "mongoose": "^3.8.24"
+    "mongoose": "^3.8.23"
   }
 }

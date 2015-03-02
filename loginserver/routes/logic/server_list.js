@@ -68,4 +68,4 @@ util.inherits(ServerList, EventEmitter3);
 var password = config.registerServerPassword;
 var varServerList = new ServerList(password);
 
-module.exports = varServerList;
+module.exports.Servers = varServerList;

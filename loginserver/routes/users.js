@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var fail = require('./logic/fail_module');
-var Users = require('./logic/user_service');
+var fail = require('./logic/fail_module').Fail;
+var Users = require('./logic/user_service').Users;
 
 /* GET users listing. */
 router.get('/', function (req, res) {
