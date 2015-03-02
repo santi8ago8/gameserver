@@ -26,10 +26,10 @@ util.inherits(FailModule, EventEmitter);
 var failVar = new FailModule();
 
 //test emmiter:
-/*failVar.on('error', function (ex) {
+failVar.on('error', function (ex) {
     console.log('error', ex);
 });
-
+/*
 failVar.run(function () {
     throw  new Error("no anda :(")
 });*/

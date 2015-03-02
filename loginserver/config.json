@@ -1,0 +1,11 @@
+{
+    "configVersion": "0.1",
+
+    "_comment1": "Servers",
+    "registerServerPassword": "fad4a46b-dbdd-4ade-a62e-c071bf75e476-10aec1ba-895d-4ce2-a81a-6a0f6bd792c0",
+
+    "_comment2": "DB users",
+    "DBUrl": "mongodb://localhost:27017/LoginServerGame",
+    "CollectionUsers": "Users"
+
+}

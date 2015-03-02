@@ -6,6 +6,7 @@ var Validator = require('jsonschema').Validator;
 var v = new Validator();
 var EventEmitter3 = require('./../../../sharedcode/eventemitter3').EventEmitter3;
 var util = require('util');
+var config = require('./../../config.json');
 
 //server list!
 
@@ -64,7 +65,7 @@ function ServerList(password) {
 
 util.inherits(ServerList, EventEmitter3);
 
-var password = 'fad4a46b-dbdd-4ade-a62e-c071bf75e476-10aec1ba-895d-4ce2-a81a-6a0f6bd792c0';
+var password = config.registerServerPassword;
 var varServerList = new ServerList(password);
 
 module.exports = varServerList;
