@@ -14,7 +14,8 @@
 
     <div flex></div>
     <nav layout="row" style="padding: 8px" ng-controller="NavCtrl" layout-align="center center">
-        <md-button ng-repeat="b in buttons" ng-href="{{b.href}}" class="md-cyan-theme">{{b.text}}</md-button>
+        <md-button ng-repeat="b in buttons" ng-href="{{b.href}}" class="md-cyan-theme" ng-if="app.isLoged">{{b.text}}</md-button>
+        <md-button ng-click="delogin()" class="md-cyan-theme" ng-if="app.isLoged"> X </md-button>
     </nav>
 </md-toolbar>
 <md-content class="md-padding">

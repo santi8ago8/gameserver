@@ -4,8 +4,10 @@ var config = require('../config');
 
 /* GET home page. */
 router.get('/', function (req, res) {
-    req.session.count = req.session.count ? req.session.count + 1 : 1;
-    res.render('index', { title: 'Express', scripts: config.getScripts()});
+    if (!req.session.isLoged)
+        req.session.isLoged = false;
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.render('index', {title: 'Login Server', scripts: config.getScripts()});
 });
 
 module.exports = router;

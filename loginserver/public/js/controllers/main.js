@@ -1,36 +1,39 @@
-app.controller('MainCtrl', ['$scope', '$rootScope', 'scopeApply', function ($scope, $rootScope, scopeApply) {
+app.controller('MainCtrl', ['$scope', '$rootScope', 'scopeApply', '$http', function ($scope, $rootScope, scopeApply, $http) {
 
-    $scope.comments = [];
+    $scope.servers = [];
 
-    $scope.initData = function (data) {
-
+    $scope.servers_s = function (data) {
         scopeApply.apply($scope, function () {
-            $scope.count = data.count;
-            $scope.comments = data.comments;
-        })
+            $scope.servers = data;
+        });
 
     };
-    $scope.sendComment = function () {
-        if ($scope.nuevoComentario != '') {
-            $rootScope.app.io.emit('comment', {comment: $scope.nuevoComentario});
-            $scope.nuevoComentario = ''
 
-        }
+    $scope.ping = function (s) {
+        $rootScope.app.io.emit('ping', {ip: s.ip, port: s.port});
     };
-    $scope.newComment = function (comment) {
+
+    $scope.ping_s = function (s) {
         scopeApply.apply($scope, function () {
-            $scope.comments.push(comment);
+            for (var i = 0; i < $scope.servers.length; i++) {
+                var server = $scope.servers[i];
+                if (server.ip == s.ip && server.port == s.port) {
+                    server.ping = s.ping;
+                }
+            }
         })
     };
 
-    $rootScope.app.io.on('session_data', $scope.initData);
-    $rootScope.app.io.on('comment', $scope.newComment);
+
+    $rootScope.app.io.on('servers', $scope.servers_s);
+    $rootScope.app.io.on('ping', $scope.ping_s);
 
     $scope.$on('$destroy', function (event, _) {
-        $rootScope.app.io.off('session_data', $scope.initData);
-        $rootScope.app.io.off('comment', $scope.newComment);
+        $rootScope.app.io.off('servers', $scope.servers_s);
+        $rootScope.app.io.off('ping', $scope.ping_s);
     });
 
-    $rootScope.app.io.emit('session_data');
+    $rootScope.app.io.emit('servers');
 }
-]);
+])
+;

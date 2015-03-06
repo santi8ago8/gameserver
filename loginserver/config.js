@@ -5,7 +5,9 @@ var engineScripts = [
     '/js/app.js',
     '/js/controllers/main.js',
     '/js/controllers/nav.js',
-    '/js/controllers/about.js'
+    '/js/controllers/about.js',
+    '/js/controllers/profile.js',
+    '/js/controllers/login.js'
 ];
 var developScripts = [
     '/js/livereload.io.js'

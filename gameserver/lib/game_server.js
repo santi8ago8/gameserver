@@ -26,7 +26,7 @@ var GameServer = (function (EventEmitter3) {
             name: "gameserver 1",
             location: "Argentina",
             description: "Firs game server!",
-            ip: "190.1.106.247",
+            ip: "192.168.1.106",
             port: 3001,
             protocol: "ws",
             loginServerUrl: "http://127.0.0.1:3000",
@@ -66,29 +66,37 @@ var GameServer = (function (EventEmitter3) {
             value: function createServer() {
                 var _this = this;
 
-                this.emitpre("create");
-                var app = this._app = require("express")();
-                app.use(bodyParser.json());
-                app.use(bodyParser.urlencoded({ extended: false }));
-                var http = require("http").Server(app);
+                this.emitpre("create", function (err) {
+                    if (err) {
+                        fail.emit("error", err);
+                    } else {
+                        var app = _this._app = require("express")();
+                        app.use(bodyParser.json());
+                        app.use(bodyParser.urlencoded({ extended: false }));
+                        var http = require("http").Server(app);
 
-                app.get("/", function (req, res) {
-                    res.json({
-                        port: _this._config.port,
-                        ip: _this._config.ip
-                    });
-                });
+                        app.get("/", function (req, res) {
+                            res.json({
+                                port: _this._config.port,
+                                ip: _this._config.ip
+                            });
+                        });
+                        app.put("/ping", function (req, res) {
+                            res.json(req.body);
+                        });
 
-                app.put("/server/start", function (req, res) {
-                    return _this.start(req, res);
-                });
-                app.put("/server/stop", function (req, res) {
-                    return _this.stop(req, res);
-                });
+                        app.put("/server/start", function (req, res) {
+                            return _this.start(req, res);
+                        });
+                        app.put("/server/stop", function (req, res) {
+                            return _this.stop(req, res);
+                        });
 
-                http.listen(this._config.port, function () {
-                    console.log("listening on *:" + _this._config.port + "\n" + _this._config.serverPassword);
-                    _this.connectLoginServer();
+                        http.listen(_this._config.port, function () {
+                            console.log("listening on *:" + _this._config.port + "\n" + _this._config.serverPassword);
+                            _this.connectLoginServer();
+                        });
+                    }
                 });
             },
             writable: true,
@@ -96,14 +104,20 @@ var GameServer = (function (EventEmitter3) {
         },
         start: {
             value: function start(req, res) {
+                var _this = this;
+
                 var result = { started: true };
                 if (req.body.serverPassword == this._config.serverPassword) {
-                    this.emitpre("start");
+                    this.emitpre("start", function (err) {
+                        if (err) {
+                            fail.emit("error", err);
+                        } else {
+                            console.log("started!");
+                            //create socket server.
 
-                    console.log("started!");
-                    //create socket server.
-
-                    this.emit("start");
+                            _this.emit("start");
+                        }
+                    });
                 } else {
 
                     result.started = false;
@@ -115,14 +129,20 @@ var GameServer = (function (EventEmitter3) {
         },
         stop: {
             value: function stop(req, res) {
+                var _this = this;
+
                 var result = { stopped: true };
                 if (req.body.serverPassword == this._config.serverPassword) {
-                    this.emitpre("stop");
+                    this.emitpre("stop", function (err) {
+                        if (err) {
+                            fail.emit("error", err);
+                        } else {
+                            console.log("stopped!");
+                            //stop socket server, disconnect users.
 
-                    console.log("stoped!");
-                    //stop socket server. disconnect players.
-
-                    this.emit("stop");
+                            _this.emit("stop");
+                        }
+                    });
                 } else {
 
                     result.stopped = false;
@@ -140,7 +160,7 @@ var GameServer = (function (EventEmitter3) {
                     username: { type: String, required: true },
                     token: { type: String },
                     name: { type: String, required: true },
-                    meta: { type: Mixed }
+                    meta: { type: dbengine.mongoose.Schema.Types.Mixed }
                 });
 
                 this._db.User = dbengine.mongoose.model(this._config.dbCollectionName, userSchema);

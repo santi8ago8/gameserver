@@ -7,6 +7,8 @@ var v = new Validator();
 var EventEmitter3 = require('./../../../sharedcode/eventemitter3').EventEmitter3;
 var util = require('util');
 var config = require('./../../config.json');
+var db = require('./db_init');
+var fail = require('./fail_module');
 
 //server list!
 
@@ -55,6 +57,20 @@ function ServerList(password) {
                 self.list[index] = data;
                 result = 'updated';
             }
+            //save in db.
+            db.Servers.update(
+                {ip: data.ip, port: data.port},
+                data,
+                {upsert: true}
+            ).exec(function (err, rowsAff) {
+                    if (err)
+                        fail.emit('error', err);
+                    else {
+                        //only save!.
+                        //TODO: debug!
+                    }
+                })
+
         }
         else {
             result = 'incorrect_password';
@@ -74,6 +90,16 @@ function ServerList(password) {
         }
         return list;
     }
+    db.Servers.find(function (err, resp) {
+        if (err)
+            fail.emit('error', err);
+        else {
+            for (var i = 0; i < resp.length; i++) {
+                var server = resp[i];
+                self.list.push(server.toObject());
+            }
+        }
+    })
 }
 
 util.inherits(ServerList, EventEmitter3);

@@ -1,0 +1,21 @@
+<h1>Change password</h1>
+
+<form ng-submit="send()">
+    <md-input-container>
+        <label>Old Password</label>
+        <input type="password" ng-model="user.password">
+    </md-input-container>
+    <md-input-container>
+        <label>Nueva Password</label>
+        <input type="password" ng-model="user.newPassword">
+    </md-input-container>
+    <md-input-container>
+        <label>Confirmar Password</label>
+        <input type="password" ng-model="user.confPassword">
+    </md-input-container>
+    <md-button type="submit">Cambiar</md-button>
+    <h2 ng-if="changed===false">Usuario o contraseña incorrectas</h2>
+
+    <h2 ng-if="changed===true">Contraseña cambiada!</h2>
+
+</form>

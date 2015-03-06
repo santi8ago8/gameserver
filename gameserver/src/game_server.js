@@ -14,7 +14,7 @@ class GameServer extends EventEmitter3 {
             name: 'gameserver 1',
             location: 'Argentina',
             description: 'Firs game server!',
-            ip: '190.1.106.247',
+            ip: '192.168.1.106',
             port: 3001,
             protocol: 'ws',
             loginServerUrl: 'http://127.0.0.1:3000',
@@ -49,37 +49,53 @@ class GameServer extends EventEmitter3 {
     }
 
     createServer() {
-        this.emitpre('create');
-        var app = this._app = require('express')();
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({extended: false}));
-        var http = require('http').Server(app);
+        this.emitpre('create', (err) => {
+            if (err) {
+                fail.emit('error', err);
+            } else {
+                var app = this._app = require('express')();
+                app.use(bodyParser.json());
+                app.use(bodyParser.urlencoded({extended: false}));
+                var http = require('http').Server(app);
 
-        app.get('/', (req, res) => {
-            res.json({
-                port: this._config.port,
-                ip: this._config.ip
-            });
+                app.get('/', (req, res) => {
+                    res.json({
+                        port: this._config.port,
+                        ip: this._config.ip
+                    });
+                });
+                app.put('/ping', (req, res) => {
+                    res.json(req.body);
+                });
+
+                app.put('/server/start', (req, res)=>this.start(req, res));
+                app.put('/server/stop', (req, res)=>this.stop(req, res));
+
+                http.listen(this._config.port, () => {
+                    console.log('listening on *:' + this._config.port + '\n' + this._config.serverPassword);
+                    this.connectLoginServer();
+                });
+            }
         });
 
-        app.put('/server/start', (req, res)=>this.start(req, res));
-        app.put('/server/stop', (req, res)=>this.stop(req, res));
-
-        http.listen(this._config.port, () => {
-            console.log('listening on *:' + this._config.port + '\n' + this._config.serverPassword);
-            this.connectLoginServer();
-        });
     }
 
     start(req, res) {
         var result = {started: true};
         if (req.body.serverPassword == this._config.serverPassword) {
-            this.emitpre('start');
+            this.emitpre('start', (err)=> {
+                if (err) {
+                    fail.emit('error', err);
+                }
+                else {
+                    console.log('started!');
+                    //create socket server.
 
-            console.log('started!');
-            //create socket server.
+                    this.emit('start');
+                }
+            });
 
-            this.emit('start');
+
         } else {
 
             result.started = false;
@@ -90,12 +106,17 @@ class GameServer extends EventEmitter3 {
     stop(req, res) {
         var result = {stopped: true};
         if (req.body.serverPassword == this._config.serverPassword) {
-            this.emitpre('stop');
+            this.emitpre('stop', (err)=> {
+                if (err) {
+                    fail.emit('error', err);
+                }
+                else {
+                    console.log('stopped!');
+                    //stop socket server, disconnect users.
 
-            console.log('stoped!');
-            //stop socket server. disconnect players.
-
-            this.emit('stop');
+                    this.emit('stop');
+                }
+            });
         } else {
 
             result.stopped = false;
@@ -110,7 +131,7 @@ class GameServer extends EventEmitter3 {
             username: {type: String, required: true},
             token: {type: String},
             name: {type: String, required: true},
-            meta: {type: Mixed}
+            meta: {type: dbengine.mongoose.Schema.Types.Mixed}
         });
 
         this._db.User = dbengine.mongoose.model(this._config.dbCollectionName, userSchema);

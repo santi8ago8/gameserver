@@ -9,20 +9,26 @@ var app = angular.module('app', ['ngRoute', 'ngAnimate', 'ngAria', 'ngMaterial']
                 templateUrl: '/html/main.html',
                 controller: 'MainCtrl'
             })
-            .when('/404', {
-                templateUrl: '/html/404.html'
+            .when('/profile', {
+                templateUrl: '/html/profile.html',
+                controller:'ProfileCtrl'
             })
             .when('/about', {
                 templateUrl: '/html/about.html',
                 controller: 'AboutCtrl'
+            })
+            .when('/login', {
+                templateUrl: '/html/login.html',
+                controller: 'LoginCtrl'
             })
             .otherwise({
                 redirectTo: '/404'
             })
 
     }])
-    .run(['$rootScope', function ($rootScope) {
+    .run(['$rootScope', 'scopeApply', '$location', function ($rootScope, scopeApply, $location) {
         $rootScope.app = {};
+        $rootScope.app.isLoged = false;
         //connect to socket.io
         $rootScope.app.io = io();
         $rootScope.app.io.ngEmit = function (ev, dat) {
@@ -41,6 +47,24 @@ var app = angular.module('app', ['ngRoute', 'ngAnimate', 'ngAria', 'ngMaterial']
                 }
             }
         };
+
+        $rootScope.app.login = function (data) {
+            scopeApply.apply($rootScope, function () {
+                $rootScope.app.isLoged = data.isLoged;
+                if (!data.isLoged) {
+                    $location.url('/login');
+                }
+                else {
+                    $location.url('/');
+                }
+            })
+        };
+
+        $rootScope.app.io.on('login', $rootScope.app.login);
+
+        $rootScope.$on('$destroy', function () {
+            $rootScope.app.io.off('login', $rootScope.app.login);
+        })
     }])
     .service('scopeApply', [function () {
         this.apply = function (scope, fn) {
