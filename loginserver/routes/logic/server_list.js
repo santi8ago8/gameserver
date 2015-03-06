@@ -21,7 +21,8 @@ var schemaServer = {
         description: {type: 'string', required: true},
         ip: {type: 'string', required: true},
         port: {type: 'number', required: true},
-        protocol: {type: 'string', required: true}
+        protocol: {type: 'string', required: true},
+        maxPlayers: {type: 'number', required: true}
     }
 };
 
@@ -61,6 +62,18 @@ function ServerList(password) {
 
         return {result: result};
     };
+    self.listPublic = function () {
+        var list = [];
+        for (var i = 0; i < self.list.length; i++) {
+            var s = self.list[i];
+            var o = {};
+            for (var j in schemaServer.properties) {
+                o[j] = s[j];
+            }
+            list.push(o);
+        }
+        return list;
+    }
 }
 
 util.inherits(ServerList, EventEmitter3);

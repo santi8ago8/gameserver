@@ -8,7 +8,7 @@ var fail = require('./logic/fail_module').Fail;
 
 /* GET servers listing. */
 router.get('/', function (req, res) {
-    res.json(serverList.list);
+    res.json(serverList.listPublic());
 });
 
 /* PUT a server/update. */

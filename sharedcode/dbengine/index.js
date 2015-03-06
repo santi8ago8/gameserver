@@ -8,7 +8,6 @@ var util = require('util');
 var mongoose = require('mongoose');
 
 
-//TODO: DO!
 
 function DBEngine(url) {
     EventEmitter3.prototype.constructor.apply(this, arguments);
