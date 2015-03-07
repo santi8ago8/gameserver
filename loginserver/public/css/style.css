@@ -8,6 +8,21 @@
 .servers {
   border-bottom: 1px #d3d3d3 solid;
 }
+.servers .status {
+  width: 24px;
+  height: 24px;
+}
+.servers .status > div {
+  border-radius: 50px;
+  width: 100%;
+  height: 100%;
+}
+.servers .status .up {
+  background-color: #7cfc00;
+}
+.servers .status .down {
+  background-color: #f00;
+}
 .servers > div {
   padding: 3px;
   border-left: 1px #d3d3d3 solid;

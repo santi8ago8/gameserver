@@ -2,11 +2,19 @@
 
 
 <div layout="row" layout-sm="column" ng-repeat="s in servers" class="servers" layout-align="center center">
-    <md-tooltip >{{s.description}} <span ng-if="s.ping"> ping: {{s.ping}} ms</span></md-tooltip>
-    <div>{{s.name|uppercase}}</div>
+
+    <div class="status">
+        <div ng-class="{up : s.ping,down : !s.ping}"  ng-click="ping(s)"></div>
+        <md-tooltip><span ng-if="s.ping">Ping: {{s.ping}}ms </span>
+            open {{s.open===true?'Yes':'No'}}
+        </md-tooltip>
+    </div>
+    <div>{{s.name|uppercase}}
+        <md-tooltip >{{s.description}}</md-tooltip>
+    </div>
     <div>{{s.location}}</div>
     <div flex>{{s.protocol}}://{{s.ip}}:{{s.port}}</div>
     <div><md-button ng-click="ping(s)">Ping {{s.ping}}</md-button></div>
-    <div><md-button>Start</md-button></div>
-    <div><md-button>Stop</md-button></div>
+    <div><md-button ng-click="startOrStop(s,'start')">Start</md-button></div>
+    <div><md-button ng-click="startOrStop(s,'stop')">Stop</md-button></div>
 </div>

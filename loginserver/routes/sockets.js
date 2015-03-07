@@ -73,18 +73,44 @@ function createEvents(socket) {
             var data = {date: new Date().getTime()};
             needle.put('http://' + server.ip + ':' + server.port + '/ping', data,
                 function (err, resp, body) {
-                    if (err)
-                        fail.emit('error', err);
+                    if (err) {
+                        //fail.emit('error', err);
+                    }
                     else {
                         var newTime = new Date().getTime();
                         var ping = (newTime - body.date);
                         server.ping = ping;
+                        server.open = body.open;
                         socket.emit('ping', server);
                     }
 
                 })
         }
     });
+
+    socket.on('startOrStop', function (server) {
+        emitStartOrStop(server);
+    });
+
+
+    function emitStartOrStop(server) {
+        if (socket.session.isLoged) {
+            debugger;
+            var url = 'http://' + server.ip + ':' + server.port + '/server/' + server.action;
+            needle.put(url,
+                {serverPassword: server.serverPassword},
+                function (err, resp, body) {
+                    if (err) {
+                        //fail.emit('error', err);
+                    }
+                    else {
+                        socket.emit('event', body);
+                    }
+
+                })
+        }
+    }
+
 
     function emitLogin() {
         socket.emit('login', {isLoged: socket.session.isLoged});

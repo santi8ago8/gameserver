@@ -26,6 +26,7 @@ class GameServer extends EventEmitter3 {
             dbUrl: 'mongodb://localhost:27017/GameServer',
             dbCollectionName: 'GameServer3001'
         };
+        this.open = false;
         this._config = extend(this._config, config);
         this._players = [];
         this.connectDB();
@@ -65,6 +66,7 @@ class GameServer extends EventEmitter3 {
                     });
                 });
                 app.put('/ping', (req, res) => {
+                    req.body.open = this.open;
                     res.json(req.body);
                 });
 
@@ -75,6 +77,7 @@ class GameServer extends EventEmitter3 {
                     console.log('listening on *:' + this._config.port + '\n' + this._config.serverPassword);
                     this.connectLoginServer();
                 });
+                debugger;
             }
         });
 
@@ -88,6 +91,7 @@ class GameServer extends EventEmitter3 {
                     fail.emit('error', err);
                 }
                 else {
+                    this.open = true;
                     console.log('started!');
                     //create socket server.
 
@@ -111,6 +115,7 @@ class GameServer extends EventEmitter3 {
                     fail.emit('error', err);
                 }
                 else {
+                    this.open = false;
                     console.log('stopped!');
                     //stop socket server, disconnect users.
 

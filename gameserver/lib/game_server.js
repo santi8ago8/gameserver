@@ -38,6 +38,7 @@ var GameServer = (function (EventEmitter3) {
             dbUrl: "mongodb://localhost:27017/GameServer",
             dbCollectionName: "GameServer3001"
         };
+        this.open = false;
         this._config = extend(this._config, config);
         this._players = [];
         this.connectDB();
@@ -82,6 +83,7 @@ var GameServer = (function (EventEmitter3) {
                             });
                         });
                         app.put("/ping", function (req, res) {
+                            req.body.open = _this.open;
                             res.json(req.body);
                         });
 
@@ -96,6 +98,7 @@ var GameServer = (function (EventEmitter3) {
                             console.log("listening on *:" + _this._config.port + "\n" + _this._config.serverPassword);
                             _this.connectLoginServer();
                         });
+                        debugger;
                     }
                 });
             },
@@ -112,6 +115,7 @@ var GameServer = (function (EventEmitter3) {
                         if (err) {
                             fail.emit("error", err);
                         } else {
+                            _this.open = true;
                             console.log("started!");
                             //create socket server.
 
@@ -137,6 +141,7 @@ var GameServer = (function (EventEmitter3) {
                         if (err) {
                             fail.emit("error", err);
                         } else {
+                            _this.open = false;
                             console.log("stopped!");
                             //stop socket server, disconnect users.
 

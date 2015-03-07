@@ -89,7 +89,7 @@ function ServerList(password) {
             list.push(o);
         }
         return list;
-    }
+    };
     db.Servers.find(function (err, resp) {
         if (err)
             fail.emit('error', err);
