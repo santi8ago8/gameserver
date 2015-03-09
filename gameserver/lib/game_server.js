@@ -15,6 +15,7 @@ var fail = require("./../../sharedcode/failmodule");
 var DBEngine = require("./../../sharedcode/dbengine").DBEngine;
 var uuid = require("node-uuid");
 var bodyParser = require("body-parser");
+var Logger = require("./engine/logger").Logger;
 
 var GameServer = (function (EventEmitter3) {
     function GameServer(config) {
@@ -41,6 +42,8 @@ var GameServer = (function (EventEmitter3) {
         this.open = false;
         this._config = extend(this._config, config);
         this._players = [];
+        this._plugins = [];
+        this.logger = new Logger(this.constructor.name);
         this.connectDB();
         this.createServer();
     }
@@ -75,6 +78,7 @@ var GameServer = (function (EventEmitter3) {
                         app.use(bodyParser.json());
                         app.use(bodyParser.urlencoded({ extended: false }));
                         var http = require("http").Server(app);
+                        _this._server = http;
 
                         app.get("/", function (req, res) {
                             res.json({
@@ -95,10 +99,11 @@ var GameServer = (function (EventEmitter3) {
                         });
 
                         http.listen(_this._config.port, function () {
-                            console.log("listening on *:" + _this._config.port + "\n" + _this._config.serverPassword);
+                            _this.logger.info("listening on *:" + _this._config.port);
                             _this.connectLoginServer();
                         });
-                        debugger;
+
+                        require("./engine/socket").Sockets(_this);
                     }
                 });
             },
@@ -116,7 +121,7 @@ var GameServer = (function (EventEmitter3) {
                             fail.emit("error", err);
                         } else {
                             _this.open = true;
-                            console.log("started!");
+                            _this.logger.info("started!");
                             //create socket server.
 
                             _this.emit("start");
@@ -142,7 +147,7 @@ var GameServer = (function (EventEmitter3) {
                             fail.emit("error", err);
                         } else {
                             _this.open = false;
-                            console.log("stopped!");
+                            _this.logger.info("stopped!");
                             //stop socket server, disconnect users.
 
                             _this.emit("stop");
@@ -172,11 +177,21 @@ var GameServer = (function (EventEmitter3) {
             },
             writable: true,
             configurable: true
+        },
+        registerPlugin: {
+            value: function registerPlugin(pluginInstance) {
+                this._plugins.push(pluginInstance);
+                //TODO: ver parte si hacerlo un event emitter o si hacerlo con metodos.
+                pluginInstance.emit("enabled", this);
+                this.logger.info(pluginInstance.constructor.name + " " + pluginInstance.constructor.version + " enabled");
+            },
+            writable: true,
+            configurable: true
         }
     });
 
     return GameServer;
 })(EventEmitter3);
 
-new GameServer();
+module.exports.GameServer = GameServer;
 //# sourceMappingURL=game_server.js.map

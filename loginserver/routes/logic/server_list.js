@@ -9,6 +9,7 @@ var util = require('util');
 var config = require('./../../config.json');
 var db = require('./db_init');
 var fail = require('./fail_module');
+var needle = require('needle');
 
 //server list!
 
@@ -68,6 +69,8 @@ function ServerList(password) {
                     else {
                         //only save!.
                         //TODO: debug!
+                        self.startOrStop(data, 'start');
+
                     }
                 })
 
@@ -90,6 +93,22 @@ function ServerList(password) {
         }
         return list;
     };
+
+    self.startOrStop = function (server, action) {
+        var url = 'http://' + server.ip + ':' + server.port + '/server/' + action;
+        needle.put(url,
+            {serverPassword: server.serverPassword},
+            function (err, resp, body) {
+                if (err) {
+                    fail.emit('error', err);
+                }
+                else {
+                    //TODO: debug!
+                }
+
+            })
+    };
+
     db.Servers.find(function (err, resp) {
         if (err)
             fail.emit('error', err);
@@ -99,7 +118,7 @@ function ServerList(password) {
                 self.list.push(server.toObject());
             }
         }
-    })
+    });
 }
 
 util.inherits(ServerList, EventEmitter3);

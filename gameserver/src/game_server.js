@@ -5,6 +5,7 @@ var fail = require('./../../sharedcode/failmodule');
 var DBEngine = require('./../../sharedcode/dbengine').DBEngine;
 var uuid = require('node-uuid');
 var bodyParser = require('body-parser');
+var Logger = require('./engine/logger').Logger;
 
 class GameServer extends EventEmitter3 {
     constructor(config) {
@@ -29,6 +30,8 @@ class GameServer extends EventEmitter3 {
         this.open = false;
         this._config = extend(this._config, config);
         this._players = [];
+        this._plugins = [];
+        this.logger = new Logger(this.constructor.name);
         this.connectDB();
         this.createServer();
     }
@@ -58,6 +61,7 @@ class GameServer extends EventEmitter3 {
                 app.use(bodyParser.json());
                 app.use(bodyParser.urlencoded({extended: false}));
                 var http = require('http').Server(app);
+                this._server = http;
 
                 app.get('/', (req, res) => {
                     res.json({
@@ -73,11 +77,15 @@ class GameServer extends EventEmitter3 {
                 app.put('/server/start', (req, res)=>this.start(req, res));
                 app.put('/server/stop', (req, res)=>this.stop(req, res));
 
+
                 http.listen(this._config.port, () => {
-                    console.log('listening on *:' + this._config.port + '\n' + this._config.serverPassword);
+                    this.logger.info('listening on *:' + this._config.port);
                     this.connectLoginServer();
                 });
-                debugger;
+
+
+                require('./engine/socket').Sockets(this);
+
             }
         });
 
@@ -92,7 +100,7 @@ class GameServer extends EventEmitter3 {
                 }
                 else {
                     this.open = true;
-                    console.log('started!');
+                    this.logger.info('started!');
                     //create socket server.
 
                     this.emit('start');
@@ -116,7 +124,7 @@ class GameServer extends EventEmitter3 {
                 }
                 else {
                     this.open = false;
-                    console.log('stopped!');
+                    this.logger.info('stopped!');
                     //stop socket server, disconnect users.
 
                     this.emit('stop');
@@ -141,6 +149,13 @@ class GameServer extends EventEmitter3 {
 
         this._db.User = dbengine.mongoose.model(this._config.dbCollectionName, userSchema);
     }
+
+    registerPlugin(pluginInstance) {
+        this._plugins.push(pluginInstance);
+        //TODO: ver parte si hacerlo un event emitter o si hacerlo con metodos.
+        pluginInstance.emit('enabled', this);
+        this.logger.info(pluginInstance.constructor.name + ' ' + pluginInstance.constructor.version + ' enabled');
+    }
 }
 
-new GameServer();
+module.exports.GameServer = GameServer;
