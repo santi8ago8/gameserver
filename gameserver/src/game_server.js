@@ -84,6 +84,7 @@ class GameServer extends EventEmitter3 {
                 });
 
 
+                //require('./engine.player').Player
                 require('./engine/socket').Sockets(this);
 
             }
@@ -140,22 +141,22 @@ class GameServer extends EventEmitter3 {
     connectDB() {
         var dbengine = new DBEngine(this._config.dbUrl);
         this._db = {};
-        var userSchema = dbengine.mongoose.Schema({
+        var userPlayer = dbengine.mongoose.Schema({
             username: {type: String, required: true},
             token: {type: String},
             name: {type: String, required: true},
             meta: {type: dbengine.mongoose.Schema.Types.Mixed}
         });
 
-        this._db.User = dbengine.mongoose.model(this._config.dbCollectionName, userSchema);
+        this._db.Player = dbengine.mongoose.model(this._config.dbCollectionName, userPlayer);
     }
 
     registerPlugin(pluginInstance) {
         this._plugins.push(pluginInstance);
-        //TODO: ver parte si hacerlo un event emitter o si hacerlo con metodos.
         pluginInstance.emit('enabled', this);
         this.logger.info(pluginInstance.constructor.name + ' ' + pluginInstance.constructor.version + ' enabled');
     }
+
 }
 
 module.exports.GameServer = GameServer;

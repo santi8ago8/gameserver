@@ -103,6 +103,7 @@ var GameServer = (function (EventEmitter3) {
                             _this.connectLoginServer();
                         });
 
+                        //require('./engine.player').Player
                         require("./engine/socket").Sockets(_this);
                     }
                 });
@@ -166,14 +167,14 @@ var GameServer = (function (EventEmitter3) {
             value: function connectDB() {
                 var dbengine = new DBEngine(this._config.dbUrl);
                 this._db = {};
-                var userSchema = dbengine.mongoose.Schema({
+                var userPlayer = dbengine.mongoose.Schema({
                     username: { type: String, required: true },
                     token: { type: String },
                     name: { type: String, required: true },
                     meta: { type: dbengine.mongoose.Schema.Types.Mixed }
                 });
 
-                this._db.User = dbengine.mongoose.model(this._config.dbCollectionName, userSchema);
+                this._db.Player = dbengine.mongoose.model(this._config.dbCollectionName, userPlayer);
             },
             writable: true,
             configurable: true
@@ -181,7 +182,6 @@ var GameServer = (function (EventEmitter3) {
         registerPlugin: {
             value: function registerPlugin(pluginInstance) {
                 this._plugins.push(pluginInstance);
-                //TODO: ver parte si hacerlo un event emitter o si hacerlo con metodos.
                 pluginInstance.emit("enabled", this);
                 this.logger.info(pluginInstance.constructor.name + " " + pluginInstance.constructor.version + " enabled");
             },

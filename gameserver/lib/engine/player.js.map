@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/engine/player.js"],"names":[],"mappings":";;;;;;;;IAKM,MAAM,GACG,SADT,MAAM;wBAAN,MAAM;CAGP;;AAIL,MAAM,CAAC,OAAO,CAAC,MAAM,GAAG,MAAM,CAAC","file":"src/engine/player.js","sourcesContent":["/**\n * Created by santi8ago8 on 13/03/15.\n */\n\n\nclass Player {\n    constructor() {\n\n    }\n}\n\n\nmodule.exports.Player = Player;"]}

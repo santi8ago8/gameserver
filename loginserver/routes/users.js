@@ -34,8 +34,11 @@ router.post('/check_token', function (req, res) {
     //check here (only for game server use)
     Users.check_token(req.body, function (resp) {
         res.json(resp);
+
     })
 
 });
+
+//TODO: change token! on logout!.
 
 module.exports = router;

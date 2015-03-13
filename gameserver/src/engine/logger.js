@@ -3,6 +3,7 @@
  */
 
 var debug = typeof (process.env.DEBUG) == 'string' ? true : false;
+
 var colors = require('colors/safe');
 var moment = require('moment');
 
