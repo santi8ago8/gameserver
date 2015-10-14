@@ -8,9 +8,8 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
  * Created by santi8ago8 on 09/03/15.
  */
 
-var debug = typeof process.env.DEBUG == "string" ? true : false;
-
 var colors = require("colors/safe");
+var debug = require("debug");
 var moment = require("moment");
 
 var Logger = (function () {
@@ -18,43 +17,28 @@ var Logger = (function () {
         _classCallCheck(this, Logger);
 
         this.name = name;
+        this.deb = debug("gs:" + name);
     }
 
     _prototypeProperties(Logger, null, {
         info: {
             value: function info(msg) {
-                if (debug) {
-                    console.log(this.addTemplate(msg, colors.green("info")));
-                }
+                this.deb(this.addTemplate(msg, colors.green("info")));
             },
             writable: true,
             configurable: true
         },
         warn: {
             value: function warn(msg) {
-                if (debug) {
-                    console.log(this.addTemplate(msg, colors.yellow("warn")));
-                }
+                this.deb(this.addTemplate(msg, colors.yellow("warn")));
             },
             writable: true,
             configurable: true
         },
         debug: {
-            value: (function (_debug) {
-                var _debugWrapper = function debug(_x) {
-                    return _debug.apply(this, arguments);
-                };
-
-                _debugWrapper.toString = function () {
-                    return _debug.toString();
-                };
-
-                return _debugWrapper;
-            })(function (msg) {
-                if (debug) {
-                    console.log(this.addTemplate(msg, colors.blue("debu")));
-                }
-            }),
+            value: function debug(msg) {
+                this.deb(this.addTemplate(msg, colors.blue("debu")));
+            },
             writable: true,
             configurable: true
         },
@@ -62,12 +46,10 @@ var Logger = (function () {
             value: function error(msg) {
                 var stack = arguments[1] === undefined ? true : arguments[1];
 
-                if (debug) {
-                    if (stack) {
-                        msg = msg + " " + new Error().stack;
-                    }
-                    console.log(this.addTemplate(msg, colors.red("erro")));
+                if (stack) {
+                    msg = msg + " " + new Error().stack;
                 }
+                this.deb(this.addTemplate(msg, colors.red("erro")));
             },
             writable: true,
             configurable: true
@@ -75,7 +57,7 @@ var Logger = (function () {
         addTemplate: {
             value: function addTemplate(msg, type) {
                 var m = new moment().format("HH:mm");
-                return "[" + m + "] [" + type + "] [" + this.name + "] " + msg;
+                return "[" + m + "] [" + type + "] " + msg;
             },
             writable: true,
             configurable: true

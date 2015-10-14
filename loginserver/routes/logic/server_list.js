@@ -8,7 +8,7 @@ var EventEmitter3 = require('./../../../sharedcode/eventemitter3').EventEmitter3
 var util = require('util');
 var config = require('./../../config.json');
 var db = require('./db_init');
-var fail = require('./fail_module');
+var fail = require('./fail_module').Fail;
 var needle = require('needle');
 
 //server list!

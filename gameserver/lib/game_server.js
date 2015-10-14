@@ -10,8 +10,8 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
 
 var EventEmitter3 = require("./../../sharedcode/eventemitter3").EventEmitter3;
 var extend = require("util-extend");
-var needle = require("needle");
-var fail = require("./../../sharedcode/failmodule");
+var request = require("superagent");
+var fail = require("./../../sharedcode/failmodule").Fail;
 var DBEngine = require("./../../sharedcode/dbengine").DBEngine;
 var uuid = require("node-uuid");
 var bodyParser = require("body-parser");
@@ -55,8 +55,9 @@ var GameServer = (function (EventEmitter3) {
             value: function connectLoginServer() {
                 var _this = this;
 
-                needle.put(this._config.loginServerUrl + this._config.loginServerUrlRegister, this._config, { json: true }, function (err, resp, body) {
+                request.put(this._config.loginServerUrl + this._config.loginServerUrlRegister).send(this._config).end(function (err, res) {
                     if (err) fail.emit("error", err);else {
+                        var body = res.body;
                         if (body.result == "added" || body.result == "updated") {
                             _this.emit("create");
                         }

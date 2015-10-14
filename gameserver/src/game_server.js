@@ -1,7 +1,7 @@
 var EventEmitter3 = require("./../../sharedcode/eventemitter3").EventEmitter3;
 var extend = require('util-extend');
-var needle = require('needle');
-var fail = require('./../../sharedcode/failmodule');
+var request = require('superagent');
+var fail = require('./../../sharedcode/failmodule').Fail;
 var DBEngine = require('./../../sharedcode/dbengine').DBEngine;
 var uuid = require('node-uuid');
 var bodyParser = require('body-parser');
@@ -37,19 +37,18 @@ class GameServer extends EventEmitter3 {
     }
 
     connectLoginServer() {
-        needle.put(
-            this._config.loginServerUrl + this._config.loginServerUrlRegister,
-            this._config, {json: true}, (err, resp, body)=> {
-                if (err)
-                    fail.emit('error', err);
+        request
+            .put(this._config.loginServerUrl + this._config.loginServerUrlRegister)
+            .send(this._config)
+            .end((err, res)=> {
+                if (err) fail.emit('error', err);
                 else {
+                    let body = res.body;
                     if (body.result == 'added' || body.result == 'updated') {
                         this.emit('create')
                     }
                 }
-
             });
-
     }
 
     createServer() {

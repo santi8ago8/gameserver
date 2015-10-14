@@ -124,6 +124,7 @@ UserService.prototype.login = function (user, cb) {
         if (err)
             fail.emit('error', err);
         else {
+            console.log(res);
             if (res) {
                 cb(res.toObject());
             } else {

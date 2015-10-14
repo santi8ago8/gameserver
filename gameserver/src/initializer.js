@@ -6,10 +6,10 @@
 var GameServer = require('./game_server').GameServer;
 
 var config = {
-    name: 'gameserver 1',
+    name: 'gameserver dev',
     location: 'Argentina',
     description: 'Firs game server!',
-    ip: '192.168.1.106',
+    ip: '192.168.1.109',
     port: 3001,
     loginServerUrl: 'http://127.0.0.1:3000',
     loginServerUrlRegister: '/servers/register',

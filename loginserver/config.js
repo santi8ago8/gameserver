@@ -1,4 +1,4 @@
-var env = 'prod'; //(dev|prod)
+var env = 'dev'; //(dev|prod)
 
 var engineScripts = [
     '/js/socket.io.js',
