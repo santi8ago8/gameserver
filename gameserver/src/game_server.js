@@ -4,6 +4,7 @@ var request = require('superagent');
 var fail = require('./../../sharedcode/failmodule').Fail;
 var DBEngine = require('./../../sharedcode/dbengine').DBEngine;
 var uuid = require('node-uuid');
+var _ = require('lodash');
 var bodyParser = require('body-parser');
 var Logger = require('./engine/logger').Logger;
 
@@ -143,11 +144,18 @@ class GameServer extends EventEmitter3 {
         var userPlayer = dbengine.mongoose.Schema({
             username: {type: String, required: true},
             token: {type: String},
-            name: {type: String, required: true},
             meta: {type: dbengine.mongoose.Schema.Types.Mixed}
         });
 
         this._db.Player = dbengine.mongoose.model(this._config.dbCollectionName, userPlayer);
+    }
+
+    triggerPlugin(evName,d) {
+        let args = arguments;
+        //this.logger.debug(evName);
+        _.forEach(this._plugins, (p, i)=> {
+            p.emit.apply(p, args);
+        });
     }
 
     registerPlugin(pluginInstance) {

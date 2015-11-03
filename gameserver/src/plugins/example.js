@@ -7,7 +7,6 @@ var Plugin = require('./../plugin').Plugin;
 class ExamplePlug extends Plugin {
     constructor() {
         super();
-        this.on('enabled', this.enabled);
     }
 
     enabled() {

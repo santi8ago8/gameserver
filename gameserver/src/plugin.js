@@ -10,8 +10,12 @@ class Plugin extends EventEmitter3 {
     constructor() {
         super();
         this.logger = new Logger(this.constructor.name);
+        this.on('enabled',this.enabled);
     }
 
+    enabled() {
+
+    }
 }
 
 Plugin.version = 0.1;

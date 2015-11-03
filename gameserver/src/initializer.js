@@ -9,7 +9,7 @@ var config = {
     name: 'gameserver dev',
     location: 'Argentina',
     description: 'Firs game server!',
-    ip: '192.168.1.109',
+    ip: '192.168.1.102',
     port: 3001,
     loginServerUrl: 'http://127.0.0.1:3000',
     loginServerUrlRegister: '/servers/register',
@@ -23,5 +23,7 @@ var config = {
 var gameServer = new GameServer(config);
 
 var ExamplePlug = require('./plugins/example').ExamplePlug;
+var Player = require('./plugins/player').Player;
 
 gameServer.registerPlugin(new ExamplePlug());
+gameServer.registerPlugin(new Player());
