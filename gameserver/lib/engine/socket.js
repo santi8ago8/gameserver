@@ -24,10 +24,8 @@ module.exports.Sockets = function (gameServer) {
             }, 1000);
         });
 
-        socket.on("c", function (commands) {
-            _.forEach(commands, function (c) {
-                pending.push(c);
-            });
+        socket.on("c", function (c) {
+            gameServer.triggerPlugin("s:" + c.c, c.d, socket);
         });
     });
     gameServer._io.use(function (socket, next) {
@@ -40,12 +38,5 @@ module.exports.Sockets = function (gameServer) {
             next(new Error('Game server close'));
         }
     });
-
-    setInterval(function () {
-        _.forEach(pending, function (c) {
-            gameServer.triggerPlugin("s:" + c.c, c.d);
-        });
-        pending = [];
-    }, 1000 / 60);
 };
 //# sourceMappingURL=socket.js.map

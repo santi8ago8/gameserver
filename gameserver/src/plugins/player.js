@@ -28,6 +28,7 @@ class Player extends Plugin {
                 username: p.username,
                 _id: p._id.toString()
             },
+            health: 100,
             t: {
                 pos: {x: 0, y: 0, z: 0},
                 rot: 0

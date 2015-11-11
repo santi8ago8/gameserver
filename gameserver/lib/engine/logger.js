@@ -6,7 +6,13 @@
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
 
 var colors = require('colors/safe');
 var debug = require('debug');
@@ -21,19 +27,32 @@ var Logger = (function () {
     }
 
     _createClass(Logger, [{
+        key: '_process',
+        value: function _process(type, args) {
+            var els = [this.addTemplate(type)];
+
+            _lodash2['default'].forEach(args, function (it) {
+                els.push(it);
+            });
+
+            this.deb.apply(this, els);
+        }
+    }, {
         key: 'info',
         value: function info(msg) {
-            this.deb(this.addTemplate(msg, colors.green('info')));
+            this._process('info', arguments);
         }
     }, {
         key: 'warn',
         value: function warn(msg) {
-            this.deb(this.addTemplate(msg, colors.yellow('warn')));
+            //this.deb(this.addTemplate(msg, colors.yellow('warn')));
+            this._process('warn', arguments);
         }
     }, {
         key: 'debug',
         value: function debug(msg) {
-            this.deb(this.addTemplate(msg, colors.blue('debu')));
+            //this.deb(this.addTemplate(msg, colors.blue('debu')));
+            this._process('debu', arguments);
         }
     }, {
         key: 'error',
@@ -47,9 +66,9 @@ var Logger = (function () {
         }
     }, {
         key: 'addTemplate',
-        value: function addTemplate(msg, type) {
+        value: function addTemplate(type) {
             var m = new moment().format('HH:mm');
-            return '[' + m + '] [' + type + '] ' + msg;
+            return '[' + m + '] [' + type + ']';
         }
     }]);
 

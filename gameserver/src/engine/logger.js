@@ -2,7 +2,7 @@
  * Created by santi8ago8 on 09/03/15.
  */
 
-
+import _ from 'lodash';
 var colors = require('colors/safe');
 var debug = require('debug');
 var moment = require('moment');
@@ -14,20 +14,29 @@ class Logger {
         this.deb = debug('gs:' + name);
     }
 
+    _process(type, args) {
+        var els = [this.addTemplate(type)];
+
+        _.forEach(args, (it)=> {
+            els.push(it);
+        });
+
+        this.deb.apply(this, els);
+    }
 
     info(msg) {
-        this.deb(this.addTemplate(msg, colors.green('info')));
+        this._process('info', arguments);
     }
 
 
     warn(msg) {
-        this.deb(this.addTemplate(msg, colors.yellow('warn')));
-
+        //this.deb(this.addTemplate(msg, colors.yellow('warn')));
+        this._process('warn', arguments);
     }
 
     debug(msg) {
-        this.deb(this.addTemplate(msg, colors.blue('debu')));
-
+        //this.deb(this.addTemplate(msg, colors.blue('debu')));
+        this._process('debu', arguments);
     }
 
     error(msg, stack = true) {
@@ -38,9 +47,9 @@ class Logger {
 
     }
 
-    addTemplate(msg, type) {
+    addTemplate(type) {
         var m = new moment().format('HH:mm');
-        return `[${m}] [${type}] ${msg}`;
+        return `[${m}] [${type}]`;
     }
 
 }

@@ -23,10 +23,8 @@ module.exports.Sockets = (gameServer)=> {
 
         });
 
-        socket.on("c", (commands)=> {
-            _.forEach(commands, (c)=> {
-                pending.push(c);
-            })
+        socket.on("c", (c)=> {
+            gameServer.triggerPlugin("s:" + c.c, c.d, socket);
         });
 
     });
@@ -37,16 +35,10 @@ module.exports.Sockets = (gameServer)=> {
             next();
             socket.emit('login');
         }
-        else { 
+        else {
             next(new Error('Game server close'));
         }
     });
 
-    setInterval(()=> {
-        _.forEach(pending, (c)=> {
-            gameServer.triggerPlugin("s:" + c.c, c.d);
-        });
-        pending = [];
-    }, 1000 / 60);
 };
 
