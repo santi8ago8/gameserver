@@ -8,12 +8,19 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var _enginePlayerJs = require('../engine/player.js');
+
+var _enginePlayerJs2 = _interopRequireDefault(_enginePlayerJs);
+
 var request = require('superagent');
 var Plugin = require('./../plugin').Plugin;
+
 var _ = require('lodash');
 
 var Player = (function (_Plugin) {
@@ -32,12 +39,13 @@ var Player = (function (_Plugin) {
             this.logger.info('Player plugin enabled');
             this.gs = gs;
             this.on('s:syncTransform', this.syncTransform.bind(this));
+            this.on('s:sync', this.syncVars.bind(this));
         }
     }, {
         key: 'emitConnected',
         value: function emitConnected(socket, p) {
 
-            var player = {
+            var player = new _enginePlayerJs2['default']({
                 _id: p._id.toString(),
                 token: p.token,
                 socket: socket,
@@ -50,7 +58,8 @@ var Player = (function (_Plugin) {
                     pos: { x: 0, y: 0, z: 0 },
                     rot: 0
                 }
-            };
+            });
+            socket.player = player;
             this.gs._players.push(player);
 
             socket.emit('player', player.data);
@@ -63,6 +72,8 @@ var Player = (function (_Plugin) {
             });
 
             socket.join('lobby');
+
+            this.syncHealth(player);
         }
     }, {
         key: 'syncTransform',
@@ -107,6 +118,33 @@ var Player = (function (_Plugin) {
                     }
                 });
             });
+            socket.on('disconnect', function () {
+
+                //TODO: remove from array, remove from clients.
+
+                socket = null;
+            });
+        }
+    }, {
+        key: 'syncVars',
+        value: function syncVars(data, player) {
+            data.sender = player._id;
+
+            _.forEach(this.gs._players, function (p) {
+                if (p._id != player._id) {
+                    //this.logger.debug('to', p._id);
+                    p.socket.emit('sync', data);
+                }
+            });
+        }
+    }, {
+        key: 'syncHealth',
+        value: function syncHealth(player) {
+            var data = {
+                sender: player._id,
+                els: [{ n: 'health', b: 'PlayerUI', v: player.health }]
+            };
+            this.gs._io.emit('sync', data);
         }
     }]);
 

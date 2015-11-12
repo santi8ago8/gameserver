@@ -17,6 +17,7 @@ class Attack extends Plugin {
         this.on('s:hit', this.hit.bind(this));
     }
 
+
     hit(data, socket) {
         //this.logger.info('hit', data);
 
@@ -30,7 +31,7 @@ class Attack extends Plugin {
             //TODO: dieeeee...
         }
 
-        //TODO: send updates...
+        this.gs.plugins.Player.syncHealth(to);
 
     }
 

@@ -32,6 +32,7 @@ class GameServer extends EventEmitter3 {
         this._config = extend(this._config, config);
         this._players = [];
         this._plugins = [];
+        this.plugins = {};
         this.logger = new Logger(this.constructor.name);
         this.connectDB();
         this.createServer();
@@ -150,7 +151,7 @@ class GameServer extends EventEmitter3 {
         this._db.Player = dbengine.mongoose.model(this._config.dbCollectionName, userPlayer);
     }
 
-    triggerPlugin(evName,d) {
+    triggerPlugin(evName, d) {
         let args = arguments;
         //this.logger.debug(evName);
         _.forEach(this._plugins, (p, i)=> {
@@ -160,6 +161,7 @@ class GameServer extends EventEmitter3 {
 
     registerPlugin(pluginInstance) {
         this._plugins.push(pluginInstance);
+        this.plugins[pluginInstance.constructor.name] = pluginInstance;
         pluginInstance.emit('enabled', this);
         this.logger.info(pluginInstance.constructor.name + ' ' + pluginInstance.constructor.version + ' enabled');
     }

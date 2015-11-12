@@ -46,6 +46,7 @@ var GameServer = (function (_EventEmitter3) {
         this._config = extend(this._config, config);
         this._players = [];
         this._plugins = [];
+        this.plugins = {};
         this.logger = new Logger(this.constructor.name);
         this.connectDB();
         this.createServer();
@@ -182,6 +183,7 @@ var GameServer = (function (_EventEmitter3) {
         key: 'registerPlugin',
         value: function registerPlugin(pluginInstance) {
             this._plugins.push(pluginInstance);
+            this.plugins[pluginInstance.constructor.name] = pluginInstance;
             pluginInstance.emit('enabled', this);
             this.logger.info(pluginInstance.constructor.name + ' ' + pluginInstance.constructor.version + ' enabled');
         }

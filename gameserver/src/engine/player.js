@@ -2,12 +2,14 @@
  * Created by santi8ago8 on 13/03/15.
  */
 
+import _ from 'lodash';
 
 class Player {
-    constructor() {
+    constructor(data) {
+        _.assign(this, data);
 
     }
 }
 
 
-module.exports.Player = Player;
+export default Player;

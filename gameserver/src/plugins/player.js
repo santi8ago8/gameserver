@@ -4,6 +4,7 @@
 
 let request = require('superagent');
 var Plugin = require('./../plugin').Plugin;
+import PlayerClass from '../engine/player.js';
 let _ = require('lodash');
 
 class Player extends Plugin {
@@ -16,11 +17,12 @@ class Player extends Plugin {
         this.logger.info('Player plugin enabled');
         this.gs = gs;
         this.on('s:syncTransform', this.syncTransform.bind(this));
+        this.on('s:sync', this.syncVars.bind(this));
     }
 
     emitConnected(socket, p) {
 
-        let player = {
+        let player = new PlayerClass({
             _id: p._id.toString(),
             token: p.token,
             socket: socket,
@@ -33,7 +35,8 @@ class Player extends Plugin {
                 pos: {x: 0, y: 0, z: 0},
                 rot: 0
             }
-        };
+        });
+        socket.player = player;
         this.gs._players.push(player);
 
         socket.emit('player', player.data);
@@ -46,6 +49,8 @@ class Player extends Plugin {
         });
 
         socket.join('lobby');
+
+        this.syncHealth(player);
 
 
     }
@@ -92,7 +97,35 @@ class Player extends Plugin {
                     }
                 });
         });
+        socket.on('disconnect', ()=> {
+
+            //TODO: remove from array, remove from clients.
+
+            socket = null;
+        })
     }
+
+    syncVars(data, player) {
+        data.sender = player._id;
+
+        _.forEach(this.gs._players, (p)=> {
+            if (p._id != player._id) {
+                //this.logger.debug('to', p._id);
+                p.socket.emit('sync', data);
+            }
+        })
+    }
+
+    syncHealth(player) {
+        var data = {
+            sender: player._id,
+            els: [
+                {n: 'health', b: 'PlayerUI', v: player.health}
+            ]
+        };
+        this.gs._io.emit('sync', data);
+    }
+
 }
 
 

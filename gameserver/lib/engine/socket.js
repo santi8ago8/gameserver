@@ -25,7 +25,7 @@ module.exports.Sockets = function (gameServer) {
         });
 
         socket.on("c", function (c) {
-            gameServer.triggerPlugin("s:" + c.c, c.d, socket);
+            gameServer.triggerPlugin("s:" + c.c, c.d, socket.player);
         });
     });
     gameServer._io.use(function (socket, next) {

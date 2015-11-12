@@ -47,7 +47,7 @@ var Attack = (function (_Plugin) {
                 //TODO: dieeeee...
             }
 
-            //TODO: send updates...
+            this.gs.plugins.Player.syncHealth(to);
         }
     }]);
 
