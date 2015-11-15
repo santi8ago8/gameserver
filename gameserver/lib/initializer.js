@@ -7,12 +7,12 @@
 var GameServer = require('./game_server').GameServer;
 
 var config = {
-    name: 'gameserver dev',
-    location: 'Argentina',
-    description: 'Firs game server!',
-    ip: '192.168.1.102',
+    name: 'GameServer DEV',
+    location: 'New York 2',
+    description: 'Demo game server [BETA]!',
+    ip: '162.243.248.53',
     port: 3001,
-    loginServerUrl: 'http://127.0.0.1:3000',
+    loginServerUrl: 'http://162.243.248.53:3000',
     loginServerUrlRegister: '/servers/register',
     loginServerUrlCheckToken: '/users/check_token',
     password: 'fad4a46b-dbdd-4ade-a62e-c071bf75e476-10aec1ba-895d-4ce2-a81a-6a0f6bd792c0', //to login server.

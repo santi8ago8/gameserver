@@ -132,13 +132,17 @@ UserService.prototype.login = function (user, cb) {
             if (res) {
                 cb(res.toObject());
             } else {
-                //user.password = pass;
+                user.password = pass;
                 user.email = user.username + "@fake.com";
                 console.log('creating user:', user);
                 varUserService.register(user, function (resp) {
                     console.log('user created:', resp);
                     db.User.findOne(user, {token: true}, function (err, resCreado) {
-                        cb(resCreado.toObject());
+			if (resCreado && resCreado.toObject){			    
+                           cb(resCreado.toObject());
+			}else{
+			   cb({error:true});
+			}
                     });
 
                 });
