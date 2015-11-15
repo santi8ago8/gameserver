@@ -51,9 +51,9 @@ var Player = (function (_Plugin) {
                 socket: socket,
                 data: {
                     username: p.username,
-                    _id: p._id.toString()
+                    _id: p._id.toString(),
+                    health: 100
                 },
-                health: 100,
                 t: {
                     pos: { x: 0, y: 0, z: 0 },
                     rot: 0
@@ -69,6 +69,12 @@ var Player = (function (_Plugin) {
                 return player._id != el._id;
             }).forEach(function (el) {
                 player.socket.emit('onlinePlayer', el.data);
+
+                socket.emit('syncTransformClient', {
+                    _id: el._id,
+                    pos: el.t.pos,
+                    rot: el.t.rot
+                });
             });
 
             socket.join('lobby');
@@ -120,7 +126,11 @@ var Player = (function (_Plugin) {
             });
             socket.on('disconnect', function () {
 
-                //TODO: remove from array, remove from clients.
+                if (socket.player) {
+                    _.remove(_this.gs._players, { _id: socket.player._id });
+                    //emit disconnect, client.
+                    _this.gs._io.emit('deonline', { _id: socket.player._id });
+                }
 
                 socket = null;
             });
@@ -140,11 +150,21 @@ var Player = (function (_Plugin) {
     }, {
         key: 'syncHealth',
         value: function syncHealth(player) {
+            var _this2 = this;
+
             var data = {
                 sender: player._id,
-                els: [{ n: 'health', b: 'PlayerUI', v: player.health }]
+                els: [{ n: 'health', b: 'PlayerUI', v: player.data.health }]
             };
             this.gs._io.emit('sync', data);
+            if (player.data.health <= 0) {
+                this.gs._io.emit('die', { _id: player._id });
+                setTimeout(function () {
+                    _this2.gs._io.emit('respawn', { _id: player._id });
+                    player.data.health = 100;
+                    _this2.syncHealth(player);
+                }, 5000);
+            }
         }
     }]);
 

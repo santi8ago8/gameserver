@@ -18,6 +18,7 @@ class Player extends Plugin {
         this.gs = gs;
         this.on('s:syncTransform', this.syncTransform.bind(this));
         this.on('s:sync', this.syncVars.bind(this));
+
     }
 
     emitConnected(socket, p) {
@@ -28,9 +29,9 @@ class Player extends Plugin {
             socket: socket,
             data: {
                 username: p.username,
-                _id: p._id.toString()
+                _id: p._id.toString(),
+                health: 100,
             },
-            health: 100,
             t: {
                 pos: {x: 0, y: 0, z: 0},
                 rot: 0
@@ -46,6 +47,12 @@ class Player extends Plugin {
             return player._id != el._id;
         }).forEach((el)=> {
             player.socket.emit('onlinePlayer', el.data);
+
+            socket.emit('syncTransformClient', {
+                _id: el._id,
+                pos: el.t.pos,
+                rot: el.t.rot
+            });
         });
 
         socket.join('lobby');
@@ -99,10 +106,14 @@ class Player extends Plugin {
         });
         socket.on('disconnect', ()=> {
 
-            //TODO: remove from array, remove from clients.
+            if (socket.player) {
+                _.remove(this.gs._players, {_id: socket.player._id});
+                //emit disconnect, client.
+                this.gs._io.emit('deonline', {_id: socket.player._id});
+            }
 
             socket = null;
-        })
+        });
     }
 
     syncVars(data, player) {
@@ -113,17 +124,25 @@ class Player extends Plugin {
                 //this.logger.debug('to', p._id);
                 p.socket.emit('sync', data);
             }
-        })
+        });
     }
 
     syncHealth(player) {
         var data = {
             sender: player._id,
             els: [
-                {n: 'health', b: 'PlayerUI', v: player.health}
+                {n: 'health', b: 'PlayerUI', v: player.data.health}
             ]
         };
         this.gs._io.emit('sync', data);
+        if (player.data.health <= 0) {
+            this.gs._io.emit('die', {_id: player._id});
+            setTimeout(()=> {
+                this.gs._io.emit('respawn', {_id: player._id});
+                player.data.health = 100;
+                this.syncHealth(player);
+            }, 5000);
+        }
     }
 
 }

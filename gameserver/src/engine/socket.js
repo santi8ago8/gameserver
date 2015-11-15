@@ -6,7 +6,10 @@ let pending = [];
 
 module.exports.Sockets = (gameServer)=> {
 
-    var io = gameServer._io = require('socket.io')(gameServer._server);
+    var io = gameServer._io = require('socket.io')(gameServer._server, {
+        pingInterval: 1000 * 60 * 60,
+        pingTimeout: 1000 * 60 * 60
+    });
 
     gameServer._io.on('connection', function (socket) {
 

@@ -54,7 +54,7 @@ class Logger {
 
     addTemplate(type) {
         var m = new moment().format('HH:mm');
-        return `[${m}] [${type}]`;
+        return `${m} ${type.substr(0,1).toUpperCase()}:${this.name} >`;
     }
 
 }

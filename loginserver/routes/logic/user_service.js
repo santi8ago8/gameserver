@@ -39,10 +39,12 @@ UserService.prototype.register = function (newUser, cb) {
     }
     else {
 
-        db.User.find({$or: [
-            {username: newUser.username},
-            {email: newUser.email}
-        ]}).exec(function (err, resp) {
+        db.User.find({
+            $or: [
+                {username: newUser.username},
+                {email: newUser.email}
+            ]
+        }).exec(function (err, resp) {
             if (err)
                 fail.emit(err);
             else {
@@ -119,7 +121,9 @@ UserService.prototype.change_password = function (user, cb) {
 };
 
 UserService.prototype.login = function (user, cb) {
-    user.password = SHA256(user.password);
+    var _this = this;
+    var pass = user.password;
+    user.password = SHA256(user.password).toString();
     db.User.findOne(user, {token: true}, function (err, res) {
         if (err)
             fail.emit('error', err);
@@ -128,7 +132,17 @@ UserService.prototype.login = function (user, cb) {
             if (res) {
                 cb(res.toObject());
             } else {
-                cb({login: false});
+                //user.password = pass;
+                user.email = user.username + "@fake.com";
+                console.log('creating user:', user);
+                varUserService.register(user, function (resp) {
+                    console.log('user created:', resp);
+                    db.User.findOne(user, {token: true}, function (err, resCreado) {
+                        cb(resCreado.toObject());
+                    });
+
+                });
+
             }
         }
     })

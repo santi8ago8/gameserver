@@ -23,21 +23,27 @@ class Attack extends Plugin {
 
         let to = _.find(this.gs._players, {_id: data.to});
         let from = _.find(this.gs._players, {_id: data.sender});
-
-        to.health -= Math.floor(Math.random() * 10);
-
-        if (to.health < 0) {
-            to.health = 0;
-            //TODO: dieeeee...
+        let multiply = 1;
+        if (data.skill) {
+            multiply = data.skill;
         }
 
-        this.gs.plugins.Player.syncHealth(to);
+        if (to && from) {
 
+            to.data.health -= Math.floor(1 + Math.random() * 10 * multiply);
+
+            if (to.data.health < 0) {
+                to.data.health = 0;
+                //TODO: dieeeee...
+            }
+
+            this.gs.plugins.Player.syncHealth(to);
+        }
     }
 
 }
 
 
-Attack.version = 0.1;
+Attack.version = 0.1; 
 
 module.exports.Attack = Attack;
