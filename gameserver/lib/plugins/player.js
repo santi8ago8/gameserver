@@ -61,6 +61,7 @@ var Player = (function (_Plugin) {
             });
             socket.player = player;
             this.gs._players.push(player);
+            this.gs.triggerPlugin('player:enter', player);
 
             socket.emit('player', player.data);
             this.gs._io.to('lobby').emit('onlinePlayer', player.data);

@@ -30,7 +30,7 @@ class Player extends Plugin {
             data: {
                 username: p.username,
                 _id: p._id.toString(),
-                health: 100,
+                health: 100
             },
             t: {
                 pos: {x: 0, y: 0, z: 0},
@@ -39,6 +39,7 @@ class Player extends Plugin {
         });
         socket.player = player;
         this.gs._players.push(player);
+        this.gs.triggerPlugin('player:enter', player);
 
         socket.emit('player', player.data);
         this.gs._io.to('lobby').emit('onlinePlayer', player.data);

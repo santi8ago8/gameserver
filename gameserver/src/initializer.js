@@ -25,7 +25,9 @@ var gameServer = new GameServer(config);
 var ExamplePlug = require('./plugins/example').ExamplePlug;
 var Player = require('./plugins/player').Player;
 var Attack = require('./plugins/attack').Attack;
+var Mob = require('./plugins/mob').Mob;
 
 gameServer.registerPlugin(new ExamplePlug());
 gameServer.registerPlugin(new Player());
 gameServer.registerPlugin(new Attack());
+gameServer.registerPlugin(new Mob());
