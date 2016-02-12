@@ -1,8 +1,8 @@
+'use strict';
+
 /**
  * Created by santi8ago8 on 09/03/15.
  */
-
-'use strict';
 
 var GameServer = require('./game_server').GameServer;
 
@@ -10,7 +10,7 @@ var config = {
     name: 'gameserver dev',
     location: 'Argentina',
     description: 'Firs game server!',
-    ip: '192.168.1.104',
+    ip: '127.0.0.1',
     port: 3001,
     loginServerUrl: 'http://127.0.0.1:3000',
     loginServerUrlRegister: '/servers/register',

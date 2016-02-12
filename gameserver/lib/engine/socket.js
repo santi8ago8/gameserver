@@ -1,8 +1,8 @@
+'use strict';
+
 /**
  * Created by santi8ago8 on 06/03/15.
  */
-'use strict';
-
 var _ = require('lodash');
 var pending = [];
 

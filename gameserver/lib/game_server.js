@@ -1,12 +1,12 @@
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var EventEmitter3 = require("./../../sharedcode/eventemitter3").EventEmitter3;
 var extend = require('util-extend');
@@ -18,15 +18,15 @@ var _ = require('lodash');
 var bodyParser = require('body-parser');
 var Logger = require('./engine/logger').Logger;
 
-var GameServer = (function (_EventEmitter3) {
-    _inherits(GameServer, _EventEmitter3);
+var GameServer = function (_EventEmitter) {
+    _inherits(GameServer, _EventEmitter);
 
     function GameServer(config) {
         _classCallCheck(this, GameServer);
 
-        _get(Object.getPrototypeOf(GameServer.prototype), 'constructor', this).call(this);
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GameServer).call(this));
 
-        this._config = {
+        _this._config = {
             name: 'gameserver 1',
             location: 'Argentina',
             description: 'Firs game server!',
@@ -42,26 +42,27 @@ var GameServer = (function (_EventEmitter3) {
             dbUrl: 'mongodb://localhost:27017/GameServer',
             dbCollectionName: 'GameServer3001'
         };
-        this.open = false;
-        this._config = extend(this._config, config);
-        this._players = [];
-        this._plugins = [];
-        this.plugins = {};
-        this.logger = new Logger(this.constructor.name);
-        this.connectDB();
-        this.createServer();
+        _this.open = false;
+        _this._config = extend(_this._config, config);
+        _this._players = [];
+        _this._plugins = [];
+        _this.plugins = {};
+        _this.logger = new Logger(_this.constructor.name);
+        _this.connectDB();
+        _this.createServer();
+        return _this;
     }
 
     _createClass(GameServer, [{
         key: 'connectLoginServer',
         value: function connectLoginServer() {
-            var _this = this;
+            var _this2 = this;
 
             request.put(this._config.loginServerUrl + this._config.loginServerUrlRegister).send(this._config).end(function (err, res) {
                 if (err) fail.emit('error', err);else {
                     var body = res.body;
                     if (body.result == 'added' || body.result == 'updated') {
-                        _this.emit('create');
+                        _this2.emit('create');
                     }
                 }
             });
@@ -69,50 +70,50 @@ var GameServer = (function (_EventEmitter3) {
     }, {
         key: 'createServer',
         value: function createServer() {
-            var _this2 = this;
+            var _this3 = this;
 
             this.emitpre('create', function (err) {
                 if (err) {
                     fail.emit('error', err);
                 } else {
-                    var app = _this2._app = require('express')();
+                    var app = _this3._app = require('express')();
                     app.use(bodyParser.json());
                     app.use(bodyParser.urlencoded({ extended: false }));
                     var http = require('http').Server(app);
-                    _this2._server = http;
+                    _this3._server = http;
 
                     app.get('/', function (req, res) {
                         res.json({
-                            port: _this2._config.port,
-                            ip: _this2._config.ip
+                            port: _this3._config.port,
+                            ip: _this3._config.ip
                         });
                     });
                     app.put('/ping', function (req, res) {
-                        req.body.open = _this2.open;
+                        req.body.open = _this3.open;
                         res.json(req.body);
                     });
 
                     app.put('/server/start', function (req, res) {
-                        return _this2.start(req, res);
+                        return _this3.start(req, res);
                     });
                     app.put('/server/stop', function (req, res) {
-                        return _this2.stop(req, res);
+                        return _this3.stop(req, res);
                     });
 
-                    http.listen(_this2._config.port, function () {
-                        _this2.logger.info('listening on *:' + _this2._config.port);
-                        _this2.connectLoginServer();
+                    http.listen(_this3._config.port, function () {
+                        _this3.logger.info('listening on *:' + _this3._config.port);
+                        _this3.connectLoginServer();
                     });
 
                     //require('./engine.player').Player
-                    require('./engine/socket').Sockets(_this2);
+                    require('./engine/socket').Sockets(_this3);
                 }
             });
         }
     }, {
         key: 'start',
         value: function start(req, res) {
-            var _this3 = this;
+            var _this4 = this;
 
             var result = { started: true };
             if (req.body.serverPassword == this._config.serverPassword) {
@@ -120,11 +121,11 @@ var GameServer = (function (_EventEmitter3) {
                     if (err) {
                         fail.emit('error', err);
                     } else {
-                        _this3.open = true;
-                        _this3.logger.info('started!');
+                        _this4.open = true;
+                        _this4.logger.info('started!');
                         //create socket server.
 
-                        _this3.emit('start');
+                        _this4.emit('start');
                     }
                 });
             } else {
@@ -136,7 +137,7 @@ var GameServer = (function (_EventEmitter3) {
     }, {
         key: 'stop',
         value: function stop(req, res) {
-            var _this4 = this;
+            var _this5 = this;
 
             var result = { stopped: true };
             if (req.body.serverPassword == this._config.serverPassword) {
@@ -144,11 +145,11 @@ var GameServer = (function (_EventEmitter3) {
                     if (err) {
                         fail.emit('error', err);
                     } else {
-                        _this4.open = false;
-                        _this4.logger.info('stopped!');
+                        _this5.open = false;
+                        _this5.logger.info('stopped!');
                         //stop socket server, disconnect users.
 
-                        _this4.emit('stop');
+                        _this5.emit('stop');
                     }
                 });
             } else {
@@ -190,7 +191,7 @@ var GameServer = (function (_EventEmitter3) {
     }]);
 
     return GameServer;
-})(EventEmitter3);
+}(EventEmitter3);
 
 module.exports.GameServer = GameServer;
 //# sourceMappingURL=game_server.js.map
